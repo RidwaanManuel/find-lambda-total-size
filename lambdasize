@@ -1,0 +1,26 @@
+#!/bin/bash
+
+# Set your AWS region
+REGION="eu-north-1"
+
+# Get a list of function names and ARNs
+function_data=$(aws lambda list-functions --region "$REGION" | jq -r '.Functions[] | .FunctionName')
+#echo "$function_data"
+# Initialize sum variable
+total_code_size=0
+
+# Loop through each function
+while read -r function_name function_arn; do
+  # Get function configuration
+  function_size=$(aws lambda list-versions-by-function --function-name "$function_name" --region "$REGION" | jq -r '[.Versions[].CodeSize | tonumber] | add') 
+  echo "$function_details"
+  # Initialize sum variable
+  total_code_size=0
+  # Optionally, print information for each function
+  echo "Function Name: $function_name, Code Size: $function_size"
+  # Optionally, print information for each function
+#    echo "Function Name: $function_name, total Code Size: $total_code_size"
+done <<< "$function_data"
+
+# Print the total CodeSize for all functions
+#echo "Total Code Size across all functions: $total_code_size"
